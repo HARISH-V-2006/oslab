@@ -1,223 +1,43 @@
-1.
-
 #include <iostream>
-#include <string>
+#include <vector>
 using namespace std;
 
-// Directory structure
-struct Directory {
-    string dirName;
-    string files[10]; // max 10 files
-    int fcnt;
-};
-
 int main() {
-    Directory dir;
-    dir.fcnt = 0;
+    string dirName, f;
+    vector<string> files;
     int ch;
-    string f;
 
-    cout << "Enter name of directory: ";
-    cin >> dir.dirName;
+    cout << "Enter directory name: ";
+    cin >> dirName;
 
     while (true) {
-         cout << "\n\n1. Create File\t2. Delete File\t3. Search File\n"
-              << "4. Display Files\t5. Exit\nEnter your choice: ";
+        cout << "\n1.Create 2.Delete 3.Search 4.Display 5.Exit\nChoice: ";
         cin >> ch;
 
-        switch (ch) {
-        case 1: // Create
-            if (dir.fcnt >= 10) {
-                cout << "Directory Full!"<<endl;
-            } else {
-                cout << "\nEnter the name of the file: ";
-                cin >> dir.files[dir.fcnt++];
-            }
-            break;
-
-        case 2: { // Delete
-            cout << "\nEnter the name of the file: ";
-            cin >> f;
-            bool found = false;
-            for (int i = 0; i < dir.fcnt; i++) {
-                if (dir.files[i] == f) {
-                    cout << f << " is deleted"<<endl;
-                    dir.files[i] = dir.files[dir.fcnt - 1]; // replace with last
-                    dir.fcnt--;
-                    found = true;
-                    break;
-                }
-            }
-            if (!found){
-                cout << f << " not found"<<endl;
-            break;
-            }
-        }
-
-        case 3: { // Search
-            cout << "\nEnter the name of the file to search: ";
-            cin >> f;
-            bool found = false;
-            for (int i = 0; i < dir.fcnt; i++) {
-                if (dir.files[i] == f) {
-                    cout << f << " is found"<<endl;
-                    found = true;
-                    break;
-                }
-            }
-            if (!found){
-                cout << f << " not found\n";
-            break;
-            }
-        }
-
-        case 4: // Display
-            if (dir.fcnt == 0) {
-                cout << "\nDirectory Empty"<<endl;;
-            } else {
-                cout << "\nThe Files are: "<<endl;
-                for (int i = 0; i < dir.fcnt; i++) {
-                    cout << dir.files[i] <<endl;
-                }
-            }
-            break;
-
-        case 5: // Exit
-            return 0;
-
-        default:
-            cout << "Invalid choice!"<<endl;
-        }
+        if (ch == 1) {
+            if (files.size() < 10) {
+                cout << "Enter file name: "; cin >> f;
+                files.push_back(f);
+            } else cout << "Directory Full!\n";
+        } 
+        else if (ch == 2) {
+            cout << "Enter file to delete: "; cin >> f;
+            bool ok = false;
+            for (int i = 0; i < files.size(); i++)
+                if (files[i] == f) { files[i] = files.back(); files.pop_back(); cout << f << " deleted\n"; ok = true; break; }
+            if (!ok) cout << f << " not found\n";
+        } 
+        else if (ch == 3) {
+            cout << "Enter file to search: "; cin >> f;
+            bool ok = false;
+            for (auto &x : files) if (x == f) { cout << f << " found\n"; ok = true; break; }
+            if (!ok) cout << f << " not found\n";
+        } 
+        else if (ch == 4) {
+            if (files.empty()) cout << "Directory Empty\n";
+            else { cout << "Files:\n"; for (auto &x : files) cout << x << "\n"; }
+        } 
+        else if (ch == 5) break;
+        else cout << "Invalid choice!\n";
     }
-}
-
-
-
-
-
-2.
-
-#include <iostream>
-#include <string>
-using namespace std;
-
-struct Directory{
-    string dname;
-    string fname[10];
-    int fcnt;
-};
-
-int main() {
-    Directory dir[10];
-    int dcnt = 0;
-    int ch;
-    string d, f;
-    int i, k; // variables declared once
-
-    cout << "Baladeepak\n\n";
-
-    while (true) {
-        cout << "\n1. Create Directory\t2. Create File\t3. Delete File";
-        cout << "\n4. Search File\t5.Display\t6. Exit";
-        cout << "\nEnter your choice: ";
-        cin >> ch;
-
-        switch(ch) {
-
-            case 1: // Create Directory
-                if(dcnt >= 10){
-                    cout << "Maximum directories reached" << endl;
-                } else {
-                    cout << "Enter name of directory: ";
-                    cin >> dir[dcnt].dname;
-                    dir[dcnt].fcnt = 0;
-                    dcnt++;
-                    cout << "Directory created" << endl;
-                }
-                break;
-
-            case 2: // Create File
-                cout << "Enter name of the directory: ";
-                cin >> d;
-                for(i = 0; i < dcnt; i++) {
-                    if(dir[i].dname == d) {
-                        if(dir[i].fcnt >= 10){
-                            cout << "Directory full! " << endl;
-                        } else {
-                            cout << "Enter name of the file: ";
-                            cin >> dir[i].fname[dir[i].fcnt];
-                            dir[i].fcnt++;
-                            cout << "File created" << endl;
-                        }
-                        break;
-                    }
-                }
-                if(i == dcnt) cout << "Directory " << d << " not found " << endl;
-                break;
-
-            case 3: // Delete File
-                cout << "Enter the name of directory: ";
-                cin >> d;
-                for(i = 0; i < dcnt; i++) {
-                    if(dir[i].dname == d){
-                        cout << "Enter the name of the file: ";
-                        cin >> f;
-                        for(k = 0; k < dir[i].fcnt; k++){
-                            if(dir[i].fname[k] == f){
-                                cout << "File " << f << " is deleted " << endl;
-                                dir[i].fname[k] = dir[i].fname[dir[i].fcnt - 1];
-                                dir[i].fcnt--;
-                                break;
-                            }
-                        }
-                        if(k == dir[i].fcnt) cout << "File " << f << " not found " << endl;
-                        break;
-                    }
-                }
-                if(i == dcnt) cout << "Directory " << d << " not found " << endl;
-                break;
-
-            case 4: // Search File
-                cout << "Enter the name of the directory: ";
-                cin >> d;
-                for(i = 0; i < dcnt; i++){
-                    if(dir[i].dname == d){
-                        cout << "Enter the name of the file: ";
-                        cin >> f;
-                        for(k = 0; k < dir[i].fcnt; k++){
-                            if(dir[i].fname[k] == f){
-                                cout << "\tFile " << f << " is found " << endl;
-                                break;
-                            }
-                        }
-                        if(k == dir[i].fcnt) cout << "\tFile " << f << " not found " << endl;
-                        break;
-                    }
-                }
-                if(i == dcnt) cout << "\tDirectory " << d << " not found " << endl;
-                break;
-
-            case 5: // Display
-                if(dcnt == 0){
-                    cout << "\tNo Directories" << endl;
-                } else {
-                    cout << "\nDirectory\tFiles" << endl;
-                    for(i = 0; i < dcnt; i++){
-                        cout << dir[i].dname << "\t";
-                        for(k = 0; k < dir[i].fcnt; k++)
-                            cout << "\n\t" << dir[i].fname[k];
-                        cout << endl;
-                    }
-                }
-                break;
-
-            case 6: // Exit
-                return 0;
-
-            default:
-                cout << "\n\tInvalid choice! Try again.." << endl;
-        }
-    }
-
-    return 0;
 }
