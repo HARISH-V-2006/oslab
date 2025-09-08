@@ -1,197 +1,33 @@
-7i)
-
 #include <iostream>
 using namespace std;
 
 #define MAX 25
 
 int main() {
-    int frag[MAX], b[MAX], f[MAX];
-    int i, j, nb, nf;
-    int flag, fragi = 0;
-    
-    cout << "\n_First Fit_\n";
-    
-    cout << "\nEnter the number of blocks: ";
+    int b[MAX], f[MAX], nb, nf;
+    cout << "\n_First Fit_\n\nEnter no. of blocks: ";
     cin >> nb;
-    cout << "Enter the number of processes: ";
-    cin >> nf;
-    
-    cout << "\nEnter the size of the blocks:-\n";
-    for (i = 1; i <= nb; i++) {
-        cout << "Block " << i << ": ";
-        cin >> b[i];
-    }
-    
-    cout << "\nEnter the size of the processes:-\n";
-    for (i = 1; i <= nf; i++) {
-        cout << "Process " << i << ": ";
-        cin >> f[i];
-    }
-    
-    cout << "\n\nProcess_No\tProcess_Size\tBlock_No\tBlock_Size\tFragment\n";
-    
-    for (i = 1; i <= nf; i++) {
-        flag = 0; // process not yet allocated
-        for (j = 1; j <= nb; j++) {
-            if (f[i] <= b[j]) { // first-fit allocation
-                flag = 1;
-                cout << i << "\t\t" << f[i] << "\t\t" << j << "\t\t" << b[j];
-                b[j] -= f[i]; // reduce block size
-                fragi += b[j];
-                cout << "\t\t" << b[j] << endl;
-                break;
-            }
-        }
-        if (!flag) {
-            cout << i << "\t\t" << f[i] << "\t\t"
-                 << "Has to wait..." << "\t\t" << "..." << "\t\t" << "..." << endl;
-        }
-    }
-    
-    return 0;
-}
-
-
-
-7 ii)
-
-#include <iostream>
-#include <vector>
-#include <iomanip>
-#include <algorithm>
-using namespace std;
-
-int main() {
-    const int max = 25;
-    vector<int> frag(max), b(max), f(max), bf(max), ff(max);
-    int i, j, nb, nf;
-    int fragi = 0;
-
-    cout << "\n__Best Fit\n";
-    cout << "\nEnter the number of blocks: ";
-    cin >> nb;
-    cout << "\nEnter the number of files: ";
+    cout << "Enter no. of processes: ";
     cin >> nf;
 
-    cout << "\nEnter the size of the blocks:-\n";
-    for(i = 1; i <= nb; i++) {
-        cout << "Block " << i << ": ";
-        cin >> b[i];
-        ff[i] = i;
-    }
+    cout << "\nBlock sizes:\n";
+    for (int i = 0; i < nb; i++) cin >> b[i];
 
-    cout << "\nEnter the size of the processes :-\n";
-    for(i = 1; i <= nf; i++) {
-        cout << "Process " << i << ": ";
-        cin >> f[i];
-    }
+    cout << "\nProcess sizes:\n";
+    for (int i = 0; i < nf; i++) cin >> f[i];
 
-    // Sorting blocks in ascending order
-    for(i = 1; i <= nb; i++) {
-        for(j = i; j <= nb; j++) {
-            if(b[i] > b[j]) {
-                swap(b[i], b[j]);
-                swap(ff[i], ff[j]);
-            }
-        }
-    }
-
-    vector<int> flagn(max);
-    int flag;
-
-    cout << "\n\nProcess_No\tProcess_Size\tBlock_No\tBlock_Size\tFragment\n";
-    for(i = 1; i <= nf; i++) {
-        flag = 1;
-        for(j = 1; j <= nb; j++) {
-            if(f[i] <= b[j]) {
-                flagn[j] = 1;
-                cout << setw(15) << i
-                     << setw(15) << f[i]
-                     << setw(15) << ff[j]
-                     << setw(15) << b[j];
-
+    cout << "\nProcess\tSize\tBlock\tB.Size\tFragment\n";
+    for (int i = 0; i < nf; i++) {
+        bool allocated = false;
+        for (int j = 0; j < nb; j++) {
+            if (f[i] <= b[j]) {
+                cout << i+1 << "\t" << f[i] << "\t" << j+1 << "\t" << b[j] 
+                     << "\t" << b[j]-f[i] << endl;
                 b[j] -= f[i];
-                fragi += b[j];
-
-                cout << setw(15) << b[j] << "\n";
+                allocated = true;
                 break;
-            } else {
-                flagn[j] = 0;
-                flag++;
             }
         }
-        if(flag > nb) {
-            cout << setw(15) << i
-                 << setw(15) << f[i]
-                 << setw(15) << "Has to wait.."
-                 << setw(15) << ".."
-                 << setw(15) << "..\n";
-        }
+        if (!allocated) cout << i+1 << "\t" << f[i] << "\tWAIT\n";
     }
-
-    return 0;
-}
-
-
-7 iii)
-
-#include <iostream>
-#include <vector>
-#include <iomanip>
-using namespace std;
-
-int main() {
-    const int max = 25;
-    vector<int> frag(max), b(max), f(max), bf(max), ff(max);
-    int i, j, nb, nf;
-    cout << "\n_Worst Fit_\n";
-
-    cout << "\nEnter the number of memory blocks: ";
-    cin >> nb;
-
-    cout << "Enter the number of Processes: ";
-    cin >> nf;
-
-    cout << "\nEnter the size of the memory blocks:\n";
-    for (i = 1; i <= nb; i++) {
-        cout << "Block " << i << ": ";
-        cin >> b[i];
-        bf[i] = b[i];
-    }
-
-    cout << "\nEnter the size of the processes:\n";
-    for (i = 1; i <= nf; i++) {
-        cout << "Process " << i << ": ";
-        cin >> f[i];
-        ff[i] = f[i];
-    }
-
-    // Worst Fit Allocation
-    for (i = 1; i <= nf; i++) {
-        int worstIndex = 1;
-        for (j = 1; j <= nb; j++) {
-            if (b[j] >= f[i] && b[j] > b[worstIndex]) {
-                worstIndex = j;
-            }
-        }
-
-        if (b[worstIndex] >= f[i]) {
-            frag[i] = b[worstIndex] - f[i];
-            b[worstIndex] -= f[i];
-            cout << setw(15) << i
-                 << setw(15) << f[i]
-                 << setw(15) << worstIndex
-                 << setw(15) << bf[worstIndex]
-                 << setw(15) << frag[i] << "\n";
-        } else {
-            cout << setw(15) << i
-                 << setw(15) << f[i]
-                 << setw(15) << "Has to wait..."
-                 << setw(15) << "-"
-                 << setw(15) << "-" << "\n";
-        }
-    }
-
-    return 0;
 }
