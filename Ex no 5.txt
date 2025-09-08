@@ -1,0 +1,22 @@
+#include <iostream>
+using namespace std;
+int main() {
+    int n = 5;
+    string state[5] = {"Thinking", "Thinking", "Thinking", "Thinking", "Thinking"};
+    for (int i = 0; i < n; i++) {
+        cout << "Philosopher " << i + 1 << " is hungry.\n";
+        int left = (i + 4) % n;
+        int right = (i + 1) % n;
+        if (state[left] != "Eating" && state[right] != "Eating") {
+            state[i] = "Eating";
+            cout << "Philosopher " << i + 1 << " starts eating.\n";
+        } else {
+            cout << "Philosopher " << i + 1 << " waits.\n";
+        }
+    }
+    cout << "\nFinal States:\n";
+    for (int i = 0; i < n; i++) {
+        cout << "Philosopher " << i + 1 << ": " << state[i] << endl;
+    }
+    return 0;
+}

@@ -1,0 +1,133 @@
+FCFS
+
+#include <iostream>
+using namespace std;
+int main() {
+    int n, bt[10], wt[10], tat[10], ct[10], t = 0;
+    float at[10], total_tat = 0, total_wt = 0;
+    cout << "Enter the number of processes: " << endl;
+    cin >> n;
+    cout << "Enter the arrival time and burst time for each processes" << endl;
+    for (int i = 0; i < n; i++) {
+        cout << "Process: " << i + 1 << " " << "Arrival time:" << endl;
+        cin >> at[i];
+        cout << "Process: " << i + 1 << " " << "Burst time:" << endl;
+        cin >> bt[i];
+        if (t < at[i]){ 
+        t = at[i];
+        t += bt[i];
+        ct[i] = t;
+        tat[i] = ct[i] - at[i];
+        wt[i] = tat[i] - bt[i];
+        total_tat += tat[i];
+        total_wt += wt[i];
+    }
+        
+    }
+    cout << "\nP\tAT\tBT\tCT\tTAT\tWT\n";
+    for (int i = 0; i < n; i++){
+        cout << "P" << i + 1 << "\t" << at[i] << "\t" << bt[i] << "\t" << ct[i] << "\t" << tat[i] << "\t" << wt[i] << "\n";
+    cout << "Total turn around time: " << total_tat / n << "\n";
+    cout << "Total waiting time: " << total_wt / n << "\n";
+}
+}
+
+
+
+SJF
+
+#include <iostream>
+using namespace std;
+int main() {
+   int n;
+   cout << "Enter number of processes: ";
+   cin >> n;
+   int bt[100], ct[100], tat[100], wt[100];
+   string pid[100];
+   for (int i = 0; i < n; i++) {
+       pid[i] = "P" + to_string(i + 1);
+       cout << "Enter Burst Time of " << pid[i] << ": ";
+       cin >> bt[i];
+   }
+   for (int i = 0; i < n - 1; i++) {
+       for (int j = 0; j < n - i - 1; j++) {
+           if (bt[j] > bt[j + 1]) {
+               swap(bt[j], bt[j + 1]);
+               swap(pid[j], pid[j + 1]);
+           }
+       }
+   }
+   ct[0] = bt[0];
+   for (int i = 1; i < n; i++) {
+       ct[i] = ct[i - 1] + bt[i];
+   }
+   float totalTAT = 0, totalWT = 0;
+   for (int i = 0; i < n; i++) {
+       tat[i] = ct[i];
+       wt[i] = tat[i] - bt[i];
+       totalTAT += tat[i];
+       totalWT += wt[i];
+   }
+   cout << "\nPID\tBT\tCT\tTAT\tWT\n";
+   for (int i = 0; i < n; i++) {
+       cout << pid[i] << "\t" << bt[i] << "\t" << ct[i]
+            << "\t" << tat[i] << "\t" << wt[i] << "\n";
+   }
+   cout << "\nAverage Turnaround Time: " << totalTAT / n;
+   cout << "\nAverage Waiting Time: " << totalWT / n;
+   return 0;
+}
+
+
+RR
+
+#include <iostream>
+using namespace std;
+int main() {
+    int n;
+    cout << "Enter total number of processes: ";
+    cin >> n;
+    int at[10], bt[10], temp[10];
+    int wt[10] = {0}, tat[10];
+    int quantum;
+    int time = 0, count = 0, remaining = n;
+    float total_wt = 0, total_tat = 0;
+    for (int i = 0; i < n; i++) {
+        cout << "Process " << i + 1 << " Arrival time: ";
+        cin >> at[i];
+        cout << "Process " << i + 1 << " Burst time: ";
+        cin >> bt[i];
+        temp[i] = bt[i];
+    }
+    cout << "Enter Time Quantum: ";
+    cin >> quantum;
+    cout << "\nProcess No\tBurst Time\tTurnaround Time\tWaiting Time\n";
+    while (remaining > 0) {
+        bool done = true;
+        for (int i = 0; i < n; i++) {
+            if (temp[i] > 0 && at[i] <= time) {
+                done = false;
+                if (temp[i] <= quantum) {
+                    time += temp[i];
+                    temp[i] = 0;
+                    tat[i] = time - at[i];
+                    wt[i] = tat[i] - bt[i];
+                    cout << "P" << i + 1 << "\t" << bt[i] << "\t\t" << tat[i] << "\t\t" << wt[i] << "\n";
+                    total_wt += wt[i];
+                    total_tat += tat[i];
+                    remaining--;
+                } 
+                else {
+                    temp[i] -= quantum;
+                    time += quantum;
+                }
+            }
+        }
+        if (done) {
+            time++;
+        }
+    }
+    cout << "Average Waiting Time: " << total_wt / n << endl;
+    cout << "Average Turnaround Time: " << total_tat / n << endl;
+    return 0;
+}

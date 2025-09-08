@@ -1,0 +1,59 @@
+odd or even
+echo “Enter the number”
+read n
+r=’expr $n % 2’
+if($r -eq 0)
+then
+echo “$n is an Even number”
+else
+echo “$n is an Odd number”
+fi
+
+
+Armstrong number
+echo "Enter a number: "
+read c
+x=$c
+sum=0
+r=0
+n=0
+while [ $x -gt 0 ]
+do
+r=`expr $x % 10`
+n=`expr $r \* $r \* $r`
+sum=`expr $sum + $n`
+x=`expr $x / 10`
+done
+if [ $sum -eq $c ]
+then
+echo "It is an Armstrong Number."
+else
+echo "It is not an Armstrong Number."
+fi
+
+
+factorial
+echo "Enter a number"
+read n
+factorial=1
+for (( i=1; i<=n; i++ ))
+do
+factorial=$((factorial * i))
+done
+echo "Factorial of $n is $factorial"
+
+
+Week days
+
+echo "Enter a number (1-7)"
+read day
+case $day in
+1) echo "Sunday" ;;
+2) echo "Monday" ;;
+3) echo "Tuesday" ;;
+4) echo "Wednesday" ;;
+5) echo "Thursday" ;;
+6) echo "Friday" ;;
+7) echo "Saturday" ;;
+*) echo "Invalid Day." ;;
+esac

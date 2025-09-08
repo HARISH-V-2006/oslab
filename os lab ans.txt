@@ -1,0 +1,471 @@
+1.#!/bin/bash
+echo "ENTER NO"
+read n
+
+# modulus operation
+r=$((n % 2))
+
+if [ $r -eq 0 ]
+then
+  echo "EVEN"
+else
+  echo "ODD"
+fi
+
+3. II)
+#include<stdio.h>
+#include<unistd.h>
+#include<fcntl.h>
+#include<sys/stat.h>
+#include<sys/types.h>
+int main(){
+  int n;
+  int fd;
+  char buff[50];
+  n = read(0,buff,sizeof(buff));
+  fd= open("A.txt",O_CREAT | O_RDWR, 0777);
+  if(fd<0){
+    perror("FILE OPEN ERROR");
+    return 1;
+  }
+  write(fd, buff,n);
+  write(1, buff, n);
+  close(fd);
+  return 0;
+}
+
+I)
+#include<stdio.h>
+#include<stdlib.h>
+#include<sys/wait.h>
+#include<unistd.h>
+int main(){
+    int pid;
+    pid=fork();
+    if(pid<0){
+        printf("Error");
+    }
+    else if(pid==0){
+        printf("Child process\n");
+        printf("Chiild process id: %d\n",getpid());
+        printf("Parrent process id: %d\n",getppid());
+    exit(0);
+    }
+    else{
+        printf("Parrent process\n");
+        wait(NULL);
+        printf("Parrent process is: %d\n");
+    }
+    return 0;
+}
+
+ exp 4 CPU SCHEDULING
+
+FCFS
+
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cout << "Enter number of processes: ";
+    cin >> n;
+
+    int burst[n], wait[n], tat[n];
+
+    // Input burst times
+    cout << "Enter burst times for each process:\n";
+    for (int i = 0; i < n; i++) {
+        cout << "P" << i+1 << ": ";
+        cin >> burst[i];
+    }
+
+    // First process has 0 waiting time
+    wait[0] = 0;
+
+    // Calculate waiting time
+    for (int i = 1; i < n; i++) {
+        wait[i] = wait[i-1] + burst[i-1];
+    }
+
+    // Calculate turnaround time
+    for (int i = 0; i < n; i++) {
+        tat[i] = wait[i] + burst[i];
+    }
+
+    // Display results
+    cout << "\nProcess\tBurst\tWaiting\tTurnaround\n";
+    float totalWait = 0, totalTAT = 0;
+    for (int i = 0; i < n; i++) {
+        cout << "P" << i+1 << "\t" << burst[i] << "\t" 
+             << wait[i] << "\t" << tat[i] << "\n";
+        totalWait += wait[i];
+        totalTAT += tat[i];
+    }
+
+    cout << "\nAverage Waiting Time: " << (totalWait / n);
+    cout << "\nAverage Turnaround Time: " << (totalTAT / n) << endl;
+
+    return 0;
+}
+
+
+
+
+
+
+ exp 10 FCFS DISK
+
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+int main() {
+    int n, head;
+    cout << "Enter number of disk requests: ";
+    cin >> n;
+
+    int req[50];
+    cout << "Enter request sequence:\n";
+    for (int i = 0; i < n; i++) cin >> req[i];
+
+    cout << "Enter initial head position: ";
+    cin >> head;
+
+    int seek = 0;
+    cout << "\nOrder of service: " << head;
+    for (int i = 0; i < n; i++) {
+        seek += abs(req[i] - head);
+        head = req[i];
+        cout << " -> " << head;
+    }
+
+    cout << "\nTotal Seek Time = " << seek;
+    cout << "\nAverage Seek Time = " << (float)seek / n << endl;
+
+    return 0;
+}
+
+
+
+exp 5 DINING PHILOSOPHER
+
+#include <iostream>
+#include <unistd.h>  // for sleep()
+using namespace std;
+
+#define N 5
+#define THINKING 0
+#define HUNGRY 1
+#define EATING 2
+
+int state[N];
+int i;
+
+void test(int i) {
+    if (state[i] == HUNGRY &&
+        state[(i + 4) % N] != EATING &&
+        state[(i + 1) % N] != EATING) {
+        
+        state[i] = EATING;
+        cout << "Philosopher " << i 
+             << " takes forks " << (i + 4) % N 
+             << " and " << i 
+             << " and starts EATING\n";
+    }
+}
+
+void take_fork(int i) {
+    state[i] = HUNGRY;
+    cout << "Philosopher " << i << " is HUNGRY\n";
+    test(i);
+}
+
+void put_fork(int i) {
+    state[i] = THINKING;
+    cout << "Philosopher " << i << " puts down forks and starts THINKING\n";
+    test((i + 4) % N);
+    test((i + 1) % N);
+}
+
+int main() {
+    for (i = 0; i < N; i++)
+        state[i] = THINKING;
+
+    for (i = 0; i < N; i++) {
+        take_fork(i);
+        sleep(1);
+        put_fork(i);
+        cout << endl;
+    }
+
+    return 0;
+}
+
+
+ exp 6 BANKERS ALGORITHM
+#include <iostream>
+using namespace std;
+
+int main() {
+    // Number of processes and resources
+    int n = 5, m = 3;
+
+    // Allocation Matrix
+    int alloc[5][3] = { {0, 1, 0},
+                        {2, 0, 0},
+                        {3, 0, 2},
+                        {2, 1, 1},
+                        {0, 0, 2} };
+
+    // Maximum Matrix
+    int max[5][3] = { {7, 5, 3},
+                      {3, 2, 2},
+                      {9, 0, 2},
+                      {2, 2, 2},
+                      {4, 3, 3} };
+
+    // Available Resources
+    int avail[3] = {3, 3, 2};
+
+    int need[5][3];
+    int f[5] = {0}, ans[5], ind = 0;
+
+    // Calculate Need Matrix = Max - Allocation
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+            need[i][j] = max[i][j] - alloc[i][j];
+
+    // Banker's Algorithm
+    for (int k = 0; k < n; k++) {
+        for (int i = 0; i < n; i++) {
+            if (f[i] == 0) {
+                int flag = 1;
+                for (int j = 0; j < m; j++) {
+                    if (need[i][j] > avail[j]) {
+                        flag = 0;
+                        break;
+                    }
+                }
+                if (flag == 1) {
+                    ans[ind++] = i;
+                    for (int y = 0; y < m; y++)
+                        avail[y] += alloc[i][y];
+                    f[i] = 1;
+                }
+            }
+        }
+    }
+
+    // Check if system is safe
+    int safe = 1;
+    for (int i = 0; i < n; i++) {
+        if (f[i] == 0) {
+            safe = 0;
+            cout << "The system is not safe.\n";
+            break;
+        }
+    }
+
+    if (safe == 1) {
+        cout << "Following is the SAFE Sequence:\n";
+        for (int i = 0; i < n; i++)
+            cout << "P" << ans[i] << " ";
+        cout << endl;
+    }
+
+    return 0;
+}
+
+
+ exp 7 first fit memory
+#include <iostream>
+using namespace std;
+
+int main() {
+    int nb, np;  
+    cout << "Enter number of memory blocks: ";
+    cin >> nb;
+    int block[nb];
+    cout << "Enter sizes of blocks:\n";
+    for (int i = 0; i < nb; i++) {
+        cout << "Block " << i+1 << ": ";
+        cin >> block[i];
+    }
+
+    cout << "Enter number of processes: ";
+    cin >> np;
+    int process[np];
+    cout << "Enter sizes of processes:\n";
+    for (int i = 0; i < np; i++) {
+        cout << "Process " << i+1 << ": ";
+        cin >> process[i];
+    }
+
+    cout << "\nProcess\tSize\tBlock\tFragment\n";
+
+    for (int i = 0; i < np; i++) {
+        bool allocated = false;
+        for (int j = 0; j < nb; j++) {
+            if (block[j] >= process[i]) {  
+                cout << "P" << i+1 << "\t" << process[i]
+                     << "\tB" << j+1
+                     << "\t" << block[j] - process[i] << endl;
+                block[j] -= process[i];  // reduce block size
+                allocated = true;
+                break;
+            }
+        }
+        if (!allocated) {
+            cout << "P" << i+1 << "\t" << process[i]
+                 << "\t" << "--"
+                 << "\t" << "Not Allocated\n";
+        }
+    }
+
+    return 0;
+}
+
+exp 8
+#include <iostream>
+using namespace std;
+
+int main() {
+    int incomingStream[] = {4, 1, 2, 4, 5};
+    int frames = 3;  // number of frames
+    int pageFaults = 0;
+    int n = sizeof(incomingStream) / sizeof(incomingStream[0]);
+    int temp[frames];   // stores pages in memory
+    int pos = 0;
+
+    // initialize frames with -1 (empty)
+    for (int i = 0; i < frames; i++) {
+        temp[i] = -1;
+    }
+
+    cout << "Incoming\tFrame 1\tFrame 2\tFrame 3\n";
+
+    for (int i = 0; i < n; i++) {
+        bool found = false;
+
+        // check if page already in frame
+        for (int j = 0; j < frames; j++) {
+            if (temp[j] == incomingStream[i]) {
+                found = true;
+                break;
+            }
+        }
+
+        // if not found, replace using FIFO
+        if (!found) {
+            temp[pos] = incomingStream[i];
+            pos = (pos + 1) % frames;  // move to next position circularly
+            pageFaults++;
+        }
+
+        // print current status
+        cout << incomingStream[i] << "\t\t";
+        for (int j = 0; j < frames; j++) {
+            if (temp[j] != -1)
+                cout << temp[j] << "\t";
+            else
+                cout << "-\t";
+        }
+        cout << endl;
+    }
+
+    cout << "\nTotal Page Faults: " << pageFaults << endl;
+
+    return 0;
+}
+
+exp 9
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Directory {
+    string dname;       // directory name
+    string fname[10];   // file names
+    int fcnt;           // file count
+};
+
+int main() {
+    Directory dir;
+    dir.fcnt = 0;
+    int choice;
+
+    cout << "Enter name of directory: ";
+    cin >> dir.dname;
+
+    do {
+        cout << "\nMenu:\n";
+        cout << "1. Create File\n";
+        cout << "2. Delete File\n";
+        cout << "3. Search File\n";
+        cout << "4. Display Files\n";
+        cout << "5. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: {
+                cout << "Enter file name to create: ";
+                cin >> dir.fname[dir.fcnt];
+                dir.fcnt++;
+                break;
+            }
+            case 2: {
+                string fname;
+                cout << "Enter file name to delete: ";
+                cin >> fname;
+                bool found = false;
+                for (int i = 0; i < dir.fcnt; i++) {
+                    if (dir.fname[i] == fname) {
+                        dir.fname[i] = dir.fname[dir.fcnt - 1]; // replace with last
+                        dir.fcnt--;
+                        found = true;
+                        cout << "File deleted.\n";
+                        break;
+                    }
+                }
+                if (!found) cout << "File not found.\n";
+                break;
+            }
+            case 3: {
+                string fname;
+                cout << "Enter file name to search: ";
+                cin >> fname;
+                bool found = false;
+                for (int i = 0; i < dir.fcnt; i++) {
+                    if (dir.fname[i] == fname) {
+                        cout << "File found: " << dir.fname[i] << endl;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) cout << "File not found.\n";
+                break;
+            }
+            case 4: {
+                if (dir.fcnt == 0) {
+                    cout << "Directory is empty.\n";
+                } else {
+                    cout << "Files in Directory " << dir.dname << ":\n";
+                    for (int i = 0; i < dir.fcnt; i++) {
+                        cout << dir.fname[i] << endl;
+                    }
+                }
+                break;
+            }
+            case 5:
+                cout << "Exiting...\n";
+                break;
+            default:
+                cout << "Invalid choice!\n";
+        }
+    } while (choice != 5);
+
+    return 0;
+}
+
